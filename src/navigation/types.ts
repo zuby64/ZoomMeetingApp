@@ -15,6 +15,7 @@ export type RootStackParamList = {
   Home: undefined;
   Profile: { userId: string };
   Settings: undefined;
+  Login: undefined;
   NotFound: undefined;
 };
 
@@ -34,5 +35,6 @@ export const validScreens: (keyof RootStackParamList)[] = [
   ScreenNames.Home,
   ScreenNames.Profile,
   ScreenNames.Settings,
+  ScreenNames.Login,
   ScreenNames.NotFound,
 ];

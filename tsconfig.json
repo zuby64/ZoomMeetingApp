@@ -18,13 +18,11 @@
       "@hooks/*": ["hooks/*"],
       "@navigation/*": ["navigation/*"],
       "@assets/*": ["assets/*"],
+      "@context/*": ["context/*"],
       "@constant": ["constant/index"],
       "@i18n": ["i18n/index"],
       "@utils": ["utils/index"]
-
-
-
+    }
   }
-}
 }
 

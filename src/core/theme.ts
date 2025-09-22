@@ -6,6 +6,9 @@ interface ThemeColors {
   primary: string;
   secondary: string;
   button: string;
+  border: string;
+  placeholder: string;
+  disabled: string;
 }
 
 interface ThemeFonts {
@@ -25,6 +28,9 @@ const lightTheme: Theme = {
     primary: '#4C0055',
     secondary: '#FC5F3A',
     button: '#FE9303',
+    border: '#CCCCCC',
+    placeholder: '#999999',
+    disabled: '#CCCCCC',
   },
   fonts: {
     regular: 'Arial, sans-serif',
@@ -39,6 +45,9 @@ const darkTheme: Theme = {
     primary: '#4C0055',
     secondary: '#FC5F3A',
     button: '#FF6F00',
+    border: '#444444',
+    placeholder: '#888888',
+    disabled: '#444444',
   },
   fonts: {
     regular: 'Arial, sans-serif',
