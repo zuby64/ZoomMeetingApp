@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
-import { useAppTheme } from '@hooks/useAppTheme';
+import { useAppTheme } from '../hooks/useAppTheme';
 
 type LoadingProps = {
   size?: 'small' | 'large' | number;

@@ -7,7 +7,7 @@ import {
   allowedLanguagesList,
   checkLanguage,
   defaultLanguage,
-} from '@constant';
+} from '../constant';
 
 export const i18nLanguages = Object.keys(resources);
 

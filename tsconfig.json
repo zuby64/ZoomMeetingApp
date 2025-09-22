@@ -11,6 +11,7 @@
     "moduleResolution": "node",
     "baseUrl": "./src",
     "paths": {
+      "@components": ["components/index"],
       "@components/*": ["components/*"],
       "@screens/*": ["screens/*"],
       "@store/*": ["store/*"],
@@ -19,6 +20,8 @@
       "@navigation/*": ["navigation/*"],
       "@assets/*": ["assets/*"],
       "@context/*": ["context/*"],
+      "@core": ["core/index"],
+      "@core/*": ["core/*"],
       "@constant": ["constant/index"],
       "@i18n": ["i18n/index"],
       "@utils": ["utils/index"]

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NavigationProp } from '@react-navigation/native';
-import { ScreenNames, RootStackParamList } from '@navigation/types';
+import { ScreenNames, RootStackParamList } from '../navigation/types';
 
 type SimpleNavigateArgs =
   | [screen: keyof RootStackParamList]

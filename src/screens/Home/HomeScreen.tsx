@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { ScreenNames } from '@navigation/types';
-import { useSafeNavigation } from '@hooks/useSafeNavigation'; // ✅ your new hook
-import { useAppTheme } from '@hooks/useAppTheme';
-import { useAuth } from '@context/AuthContext';
+import { View, StyleSheet } from 'react-native';
+import { ScreenNames } from '../../navigation/types';
+import { useSafeNavigation } from '../../hooks/useSafeNavigation'; // ✅ your new hook
+import { useAppTheme } from '../../hooks/useAppTheme';
+import { useAuth } from '../../context/AuthContext';
+import { Button, Text } from '../../components';
 
 const HomeScreen = () => {
   const { safeNavigate } = useSafeNavigation(); // ✅ use this instead of useTypedNavigation
@@ -40,40 +41,38 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Welcome to the App!</Text>
+      <Text.H1 style={styles.welcomeText}>Welcome to the App!</Text.H1>
       
       <View style={styles.buttonContainer}>
-        <View style={styles.button}>
-          <Button
-            title="Logout"
-            onPress={handleLogout}
-            color="red"
-          />
-        </View>
+        <Button
+          buttonText="Logout"
+          onPress={handleLogout}
+          buttonStyle={[styles.button, { backgroundColor: 'red' }]}
+        />
 
         {/* ✅ Example of normal navigation */}
-        <View style={styles.button}>
-          <Button
-            title="Go to Profile"
-            onPress={() => safeNavigate(ScreenNames.Profile, { userId: '123' })}
-          />
-        </View>
+        <Button
+          buttonText="Go to Profile"
+          onPress={() => safeNavigate(ScreenNames.Profile, { userId: '123' })}
+          buttonStyle={styles.button}
+        />
 
         {/* ✅ Example of a typo / fallback test */}
-        <View style={styles.button}>
-          <Button
-            title="Go to Typo Screen"
-            onPress={() =>
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              safeNavigate('TypoScreenName' as any)
-            }
-          />
-        </View>
+        <Button
+          buttonText="Go to Typo Screen"
+          onPress={() =>
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            safeNavigate('TypoScreenName' as any)
+          }
+          buttonStyle={styles.button}
+        />
 
         {/* ✅ Toggle Theme */}
-        <View style={styles.button}>
-          <Button title="Toggle Theme" onPress={toggleTheme} />
-        </View>
+        <Button 
+          buttonText="Toggle Theme" 
+          onPress={toggleTheme}
+          buttonStyle={styles.button}
+        />
       </View>
     </View>
   );

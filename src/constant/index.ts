@@ -3,6 +3,7 @@ export {
   allowedLanguagesList,
   checkLanguage,
   defaultLanguage,
+  isRTL,
 } from './Locale';
 
 // export {AppScreenName, AuthScreenName} from './ScreenName';
