@@ -1,13 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
-import { HomeScreen, ProfileScreen, NotFoundScreen } from '@screens/index';
-import LoginScreen from '@screens/LoginScreen';
-import { RootStackParamList, ScreenNames } from '@navigation/types'; // Adjust the import path as necessary
-import { ThemeProvider } from '@hooks/useAppTheme'; // Adjust the import path as necessary
-import { useBootApplication } from '@hooks/useBootApplication';
-import { useAuth } from '@context/AuthContext';
-import { Loader } from '@components/Loader';
+import { HomeScreen, ProfileScreen, NotFoundScreen } from '../screens/index';
+import LoginScreen from '../screens/LoginScreen';
+import { RootStackParamList, ScreenNames } from './types'; // Adjust the import path as necessary
+import { ThemeProvider } from '../hooks/useAppTheme'; // Adjust the import path as necessary
+import { useBootApplication } from '../hooks/useBootApplication';
+import { useAuth } from '../context/AuthContext';
+import { Loading } from '../components';
 import linking from './linking';
 
 const Stack = createNativeStackNavigator<RootStackParamList>(); // <--- here
@@ -17,7 +17,7 @@ const AppNavigator = () => {
   const { userToken, isLoading } = useAuth();
 
   if (!isInitialized || isLoading) {
-    return <Loader text={isLoading ? 'Authenticating...' : 'Initializing...'} />;
+    return <Loading />;
   }
 
   return (

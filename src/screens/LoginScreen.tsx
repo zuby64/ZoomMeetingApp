@@ -126,14 +126,12 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import { useAuth } from '@context/AuthContext';
-import { useAppTheme } from '@hooks/useAppTheme';
+import { useAuth } from '../context/AuthContext';
+import { useAppTheme } from '../hooks/useAppTheme';
+import { Button, Text, TextInput } from '../components';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('emilys'); // ✅ default test user
@@ -171,27 +169,12 @@ const LoginScreen = () => {
       marginBottom: 30,
       color: theme.colors.text,
     },
-    input: {
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      borderRadius: 8,
-      padding: 12,
+    inputContainer: {
       marginBottom: 16,
-      fontSize: 16,
-      backgroundColor: theme.colors.background,
-      color: theme.colors.text,
     },
     button: {
       backgroundColor: theme.colors.primary,
-      padding: 15,
-      borderRadius: 8,
-      alignItems: 'center',
       marginTop: 10,
-    },
-    buttonText: {
-      color: 'white',
-      fontSize: 16,
-      fontWeight: 'bold',
     },
     errorText: {
       color: 'red',
@@ -228,12 +211,11 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text.H1 style={styles.title}>Login</Text.H1>
 
       <TextInput
-        style={styles.input}
+        containerStyle={styles.inputContainer}
         placeholder="Username"
-        placeholderTextColor={theme.colors.placeholder}
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
@@ -242,9 +224,8 @@ const LoginScreen = () => {
       />
 
       <TextInput
-        style={styles.input}
+        containerStyle={styles.inputContainer}
         placeholder="Password"
-        placeholderTextColor={theme.colors.placeholder}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -253,23 +234,20 @@ const LoginScreen = () => {
         editable={!isLoading}
       />
 
-      <TouchableOpacity
-        style={[styles.button, isLoading && styles.disabledButton]}
+      <Button
+        buttonText={isLoading ? 'Logging in...' : 'Login'}
         onPress={handleLogin}
         disabled={isLoading}
-      >
-        <Text style={styles.buttonText}>
-          {isLoading ? 'Logging in...' : 'Login'}
-        </Text>
-      </TouchableOpacity>
+        buttonStyle={[styles.button, isLoading && styles.disabledButton]}
+      />
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {error ? <Text.Span style={styles.errorText}>{error}</Text.Span> : null}
 
       {isLoading && (
         <View style={styles.loadingOverlay}>
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
-            <Text style={styles.loadingText}>Logging in...</Text>
+            <Text.H4 style={styles.loadingText}>Logging in...</Text.H4>
           </View>
         </View>
       )}

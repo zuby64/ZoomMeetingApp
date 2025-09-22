@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Localization from 'expo-localization'; // ✅ Expo-compatible
-import { Languages, StorageKeys } from '@constant';
-import { StorageHelper } from '@utils';
+import { Languages, StorageKeys } from '../constant';
+import { StorageHelper } from '../utils';
 import { initializeTranslations } from '118n';
 
 SplashScreen.preventAutoHideAsync(); // Keep splash visible until initialization is done
