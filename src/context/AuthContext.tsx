@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showMessage } from 'react-native-flash-message';
+import { FlashMessage } from '@components';
+import { FlashMessageType } from '@constant';
 
 interface User {
   id: number;
@@ -54,62 +57,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuthState();
   }, []);
 
-const login = async (username: string, password: string): Promise<boolean> => {
-  try {
-    setIsLoading(true);
-    const response = await fetch('https://dummyjson.com/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-    const data = await response.json();
-    
-    console.log('Login response:', { status: response.status, data });
-
-    if (response.ok && data.accessToken) {
-      // Save token
-      await AsyncStorage.setItem('userToken', data.accessToken);
-      setUserToken(data.accessToken);
-
-      // Fetch user profile using the token
-      const userRes = await fetch('https://dummyjson.com/auth/me', {
-        method: 'GET',
+  const login = async (username: string, password: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('https://dummyjson.com/auth/login', {
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${data.accessToken}`,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ username, password }),
       });
 
-      const userData: User = await userRes.json();
+      const data = await response.json();
 
-      if (userRes.ok) {
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
+      if (response.ok && data.accessToken) {
+        // Save token
+        await AsyncStorage.setItem('userToken', data.accessToken);
+        setUserToken(data.accessToken);
+
+        // Fetch user profile using the token
+        const userRes = await fetch('https://dummyjson.com/auth/me', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${data.accessToken}`,
+          },
+        });
+
+        const userData: User = await userRes.json();
+
+        if (userRes.ok) {
+          await AsyncStorage.setItem('user', JSON.stringify(userData));
+          setUser(userData);
+          FlashMessage('Login successful!', FlashMessageType.SUCCESS)
+        }
+
+        return true;
+      } else {
+
+        FlashMessage(data.message || data.error || 'Login failed', FlashMessageType.DANGER)
+        return false;
       }
+    } catch (error) {
 
-      return true;
-    } else {
-      console.error('Login failed:', data.message || data.error);
+      FlashMessage('Network error. Please try again.', FlashMessageType.DANGER)
       return false;
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    return false;
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
 
   const logout = async (): Promise<void> => {
     try {
       await AsyncStorage.multiRemove(['userToken', 'user']);
       setUserToken(null);
+      
       setUser(null);
+
+      FlashMessage('Logged out successfully!', FlashMessageType.SUCCESS)
     } catch (error) {
-      console.error('Logout error:', error);
+
+      FlashMessage('Logout error. Please try again.', FlashMessageType.DANGER)
+
     }
   };
 
