@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
+    "types": ["jest", "@testing-library/jest-native"],
     "baseUrl": "./src",
     "paths": {
       "@components": ["components/index"],

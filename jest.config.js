@@ -4,6 +4,11 @@ module.exports = {
     '@testing-library/jest-native/extend-expect',
     '<rootDir>/src/setupTests.ts',
   ],
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.test.json',
+    },
+  },
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|@react-native|react-clone-referenced-element|@react-navigation|@react-native-community|@react-native-async-storage|@tanstack|axios))',
   ],
