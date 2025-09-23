@@ -5,6 +5,7 @@ import { KeyboardAvoidingView } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 import { AuthProvider } from './src/context/AuthContext';
+import { QueryProvider } from './src/providers/QueryProvider';
 import FlashMessage from 'react-native-flash-message';
 
 export default function App() {
@@ -16,9 +17,11 @@ export default function App() {
       >
         <SafeAreaProvider>
           <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-            <AuthProvider>
-              <AppNavigator />
-            </AuthProvider>
+            <QueryProvider>
+              <AuthProvider>
+                <AppNavigator />
+              </AuthProvider>
+            </QueryProvider>
             <FlashMessage 
               position="top" 
               floating={true}
