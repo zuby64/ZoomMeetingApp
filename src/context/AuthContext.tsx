@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
 import { FlashMessage } from '@components';
-import { FlashMessageType } from '@constant';
+import { FlashMessageType, UIStrings, APIStrings, FlashMessageTypes, StorageKeys } from '@constant';
 
 interface User {
   id: number;
@@ -60,10 +60,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const response = await fetch('https://dummyjson.com/auth/login', {
+      const response = await fetch(APIStrings.LOGIN_ENDPOINT, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': APIStrings.CONTENT_TYPE,
         },
         body: JSON.stringify({ username, password }),
       });
@@ -72,34 +72,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (response.ok && data.accessToken) {
         // Save token
-        await AsyncStorage.setItem('userToken', data.accessToken);
+        await AsyncStorage.setItem(StorageKeys.USER_TOKEN, data.accessToken);
         setUserToken(data.accessToken);
 
         // Fetch user profile using the token
-        const userRes = await fetch('https://dummyjson.com/auth/me', {
+        const userRes = await fetch(APIStrings.USER_PROFILE_ENDPOINT, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${data.accessToken}`,
+            Authorization: `${APIStrings.BEARER_PREFIX}${data.accessToken}`,
           },
         });
 
         const userData: User = await userRes.json();
 
         if (userRes.ok) {
-          await AsyncStorage.setItem('user', JSON.stringify(userData));
+          await AsyncStorage.setItem(StorageKeys.USER_DATA, JSON.stringify(userData));
           setUser(userData);
-          FlashMessage('Login successful!', FlashMessageType.SUCCESS)
+          FlashMessage(UIStrings.LOGIN_SUCCESS, FlashMessageTypes.SUCCESS);
         }
 
         return true;
       } else {
-
-        FlashMessage(data.message || data.error || 'Login failed', FlashMessageType.DANGER)
+        FlashMessage(data.message || data.error || UIStrings.LOGIN_FAILED, FlashMessageTypes.ERROR);
         return false;
       }
     } catch (error) {
-
-      FlashMessage('Network error. Please try again.', FlashMessageType.DANGER)
+      FlashMessage(UIStrings.NETWORK_ERROR, FlashMessageTypes.ERROR);
       return false;
     } finally {
       setIsLoading(false);
@@ -109,16 +107,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async (): Promise<void> => {
     try {
-      await AsyncStorage.multiRemove(['userToken', 'user']);
+      await AsyncStorage.multiRemove([StorageKeys.USER_TOKEN, StorageKeys.USER_DATA]);
       setUserToken(null);
-      
       setUser(null);
-
-      FlashMessage('Logged out successfully!', FlashMessageType.SUCCESS)
+      FlashMessage(UIStrings.LOGOUT_SUCCESS, FlashMessageTypes.SUCCESS);
     } catch (error) {
-
-      FlashMessage('Logout error. Please try again.', FlashMessageType.DANGER)
-
+      FlashMessage(UIStrings.LOGOUT_ERROR, FlashMessageTypes.ERROR);
     }
   };
 

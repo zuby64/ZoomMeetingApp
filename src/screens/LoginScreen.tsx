@@ -9,8 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { useAppTheme } from '../hooks/useAppTheme';
 import { Button, Text, TextInput } from '../components';
 import { FlashMessage } from '../components';
-import { FlashMessageType } from '../constant';
-import { showMessage } from 'react-native-flash-message';
+import {UIStrings, FlashMessageTypes } from '../constant';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('emilys'); // ✅ default test user
@@ -20,19 +19,10 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
-      // showMessage({
-      //   message: 'Please enter both username and password',
-      //   type: 'warning',
-      //   duration: 3000,
-      // });
-      FlashMessage('Please enter both username and password',FlashMessageType.WARNING)
+      FlashMessage(UIStrings.ENTER_USERNAME_PASSWORD, FlashMessageTypes.WARNING);
       return;
     }
 
-    // Test FlashMessage directly
-      // FlashMessage('Please enter both username and password',FlashMessageType.WARNING)
-
-    
     await login(username.trim(), password);
   };
 
@@ -86,11 +76,11 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text.H1 style={styles.title}>Login</Text.H1>
+      <Text.H1 style={styles.title}>{UIStrings.LOGIN}</Text.H1>
 
       <TextInput
         containerStyle={styles.inputContainer}
-        placeholder="Username"
+        placeholder={UIStrings.USERNAME}
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
@@ -100,7 +90,7 @@ const LoginScreen = () => {
 
       <TextInput
         containerStyle={styles.inputContainer}
-        placeholder="Password"
+        placeholder={UIStrings.PASSWORD}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -110,18 +100,17 @@ const LoginScreen = () => {
       />
 
       <Button
-        buttonText={isLoading ? 'Logging in...' : 'Login'}
+        buttonText={isLoading ? UIStrings.LOGGING_IN : UIStrings.LOGIN}
         onPress={handleLogin}
         disabled={isLoading}
         buttonStyle={[styles.button, isLoading && styles.disabledButton]}
       />
 
-
       {isLoading && (
         <View style={styles.loadingOverlay}>
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
-            <Text.H4 style={styles.loadingText}>Logging in...</Text.H4>
+            <Text.H4 style={styles.loadingText}>{UIStrings.LOGGING_IN}</Text.H4>
           </View>
         </View>
       )}

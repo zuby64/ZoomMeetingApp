@@ -7,4 +7,6 @@ export const StorageKeys = {
   STATION_ID: '@STATION_ID',
   CART_ID: '@CART_ID',
   CART_COUNT: '@CART_COUNT',
+  USER_TOKEN: 'userToken',
+  USER_DATA: 'user',
 };

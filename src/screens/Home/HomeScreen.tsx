@@ -5,6 +5,7 @@ import { useSafeNavigation } from '../../hooks/useSafeNavigation'; // ✅ your n
 import { useAppTheme } from '../../hooks/useAppTheme';
 import { useAuth } from '../../context/AuthContext';
 import { Button, Text } from '../../components';
+import { UIStrings } from '../../constant';
 
 const HomeScreen = () => {
   const { safeNavigate } = useSafeNavigation(); // ✅ use this instead of useTypedNavigation
@@ -41,25 +42,25 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text.H1 style={styles.welcomeText}>Welcome to the App!</Text.H1>
+      <Text.H1 style={styles.welcomeText}>{UIStrings.WELCOME_MESSAGE}</Text.H1>
       
       <View style={styles.buttonContainer}>
         <Button
-          buttonText="Logout"
+          buttonText={UIStrings.LOGOUT}
           onPress={handleLogout}
           buttonStyle={[styles.button, { backgroundColor: 'red' }]}
         />
 
         {/* ✅ Example of normal navigation */}
         <Button
-          buttonText="Go to Profile"
+          buttonText={UIStrings.GO_TO_PROFILE}
           onPress={() => safeNavigate(ScreenNames.Profile, { userId: '123' })}
           buttonStyle={styles.button}
         />
 
         {/* ✅ Example of a typo / fallback test */}
         <Button
-          buttonText="Go to Typo Screen"
+          buttonText={UIStrings.GO_TO_TYPO_SCREEN}
           onPress={() =>
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             safeNavigate('TypoScreenName' as any)
@@ -69,7 +70,7 @@ const HomeScreen = () => {
 
         {/* ✅ Toggle Theme */}
         <Button 
-          buttonText="Toggle Theme" 
+          buttonText={UIStrings.TOGGLE_THEME} 
           onPress={toggleTheme}
           buttonStyle={styles.button}
         />

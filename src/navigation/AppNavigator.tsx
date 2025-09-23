@@ -8,6 +8,7 @@ import { ThemeProvider } from '../hooks/useAppTheme'; // Adjust the import path 
 import { useBootApplication } from '../hooks/useBootApplication';
 import { useAuth } from '../context/AuthContext';
 import { Loading } from '../components';
+import { UIStrings } from '../constant';
 import linking from './linking';
 
 const Stack = createNativeStackNavigator<RootStackParamList>(); // <--- here
@@ -17,7 +18,7 @@ const AppNavigator = () => {
   const { userToken, isLoading } = useAuth();
 
   if (!isInitialized || isLoading) {
-    return <Loading />;
+    return <Loading text={isLoading ? UIStrings.AUTHENTICATING : UIStrings.INITIALIZING} />;
   }
 
   return (

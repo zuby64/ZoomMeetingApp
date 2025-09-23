@@ -11,6 +11,7 @@ export {
 export { StorageKeys } from './StorageKey';
 
 export { FlashMessageType } from './FlashMessage';
+export * from './Strings';
 
 // export {ImagePath} from './ImageKeys';
 
