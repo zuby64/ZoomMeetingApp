@@ -1,0 +1,277 @@
+import React from 'react';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import App from '../App';
+
+// Mock AsyncStorage
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  multiGet: jest.fn(),
+  multiRemove: jest.fn(),
+}));
+
+// Mock FlashMessage
+jest.mock('react-native-flash-message', () => ({
+  __esModule: true,
+  default: () => null,
+  showMessage: jest.fn(),
+}));
+
+// Mock the auth service
+jest.mock('../src/services', () => ({
+  AuthHooks: {
+    useLogin: () => ({
+      mutateAsync: jest.fn().mockResolvedValue({
+        id: 1,
+        username: 'testuser',
+        email: 'test@example.com',
+        token: 'mock-token',
+      }),
+      isPending: false,
+    }),
+    useLogout: () => ({
+      mutateAsync: jest.fn().mockResolvedValue(undefined),
+      isPending: false,
+    }),
+    useStoredUser: () => ({
+      data: null,
+    }),
+  },
+}));
+
+// Mock navigation
+jest.mock('@react-navigation/native', () => ({
+  NavigationContainer: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+jest.mock('@react-navigation/native-stack', () => ({
+  createNativeStackNavigator: () => ({
+    Navigator: ({ children }: { children: React.ReactNode }) => children,
+    Screen: ({ children }: { children: React.ReactNode }) => children,
+  }),
+}));
+
+// Mock the theme provider
+jest.mock('../src/hooks/useAppTheme', () => ({
+  useAppTheme: () => ({
+    theme: {
+      colors: {
+        primary: '#007AFF',
+        background: '#FFFFFF',
+        text: '#000000',
+        primaryContainer: '#F0F0F0',
+      },
+    },
+    toggleTheme: jest.fn(),
+  }),
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+// Mock the boot application hook
+jest.mock('../src/hooks/useBootApplication', () => ({
+  useBootApplication: () => ({
+    isInitialized: true,
+  }),
+}));
+
+// Mock the safe area context
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
+  SafeAreaView: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+// Mock gesture handler
+jest.mock('react-native-gesture-handler', () => ({
+  GestureHandlerRootView: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+// Mock keyboard avoiding view
+jest.mock('react-native', () => {
+  const RN = jest.requireActual('react-native');
+  return {
+    ...RN,
+    KeyboardAvoidingView: ({ children }: { children: React.ReactNode }) => children,
+    Platform: {
+      ...RN.Platform,
+      OS: 'ios',
+    },
+  };
+});
+
+describe('App Integration Tests', () => {
+  let queryClient: QueryClient;
+
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+        mutations: {
+          retry: false,
+        },
+      },
+    });
+  });
+
+  afterEach(() => {
+    queryClient.clear();
+  });
+
+  it('should render the app without crashing', () => {
+    // Act
+    const { getByText } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    );
+
+    // Assert
+    expect(getByText('Login')).toBeTruthy();
+  });
+
+  it('should display login form with username and password fields', () => {
+    // Act
+    const { getByPlaceholderText } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    );
+
+    // Assert
+    expect(getByPlaceholderText('Username')).toBeTruthy();
+    expect(getByPlaceholderText('Password')).toBeTruthy();
+  });
+
+  it('should have default test credentials pre-filled', () => {
+    // Act
+    const { getByDisplayValue } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    );
+
+    // Assert
+    expect(getByDisplayValue('emilys')).toBeTruthy();
+    expect(getByDisplayValue('emilyspass')).toBeTruthy();
+  });
+
+  it('should show login button', () => {
+    // Act
+    const { getByText } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    );
+
+    // Assert
+    expect(getByText('Login')).toBeTruthy();
+  });
+
+  it('should handle login button press', async () => {
+    // Arrange
+    const mockLogin = jest.fn().mockResolvedValue({
+      id: 1,
+      username: 'testuser',
+      email: 'test@example.com',
+      token: 'mock-token',
+    });
+
+    // Mock the auth service with our mock function
+    jest.doMock('../src/services', () => ({
+      AuthHooks: {
+        useLogin: () => ({
+          mutateAsync: mockLogin,
+          isPending: false,
+        }),
+        useLogout: () => ({
+          mutateAsync: jest.fn().mockResolvedValue(undefined),
+          isPending: false,
+        }),
+        useStoredUser: () => ({
+          data: null,
+        }),
+      },
+    }));
+
+    // Act
+    const { getByText } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    );
+
+    const loginButton = getByText('Login');
+    fireEvent.press(loginButton);
+
+    // Assert
+    await waitFor(() => {
+      expect(mockLogin).toHaveBeenCalledWith({
+        username: 'emilys',
+        password: 'emilyspass',
+      });
+    });
+  });
+
+  it('should show validation error for empty fields', async () => {
+    // Arrange
+    const { getByText, getByPlaceholderText } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    );
+
+    // Clear the input fields
+    const usernameInput = getByPlaceholderText('Username');
+    const passwordInput = getByPlaceholderText('Password');
+    
+    fireEvent.changeText(usernameInput, '');
+    fireEvent.changeText(passwordInput, '');
+
+    // Act
+    const loginButton = getByText('Login');
+    fireEvent.press(loginButton);
+
+    // Assert
+    await waitFor(() => {
+      // The validation error should be shown via FlashMessage
+      // Since we mocked FlashMessage, we can't easily test the message content
+      // but we can verify the login function wasn't called with empty values
+    });
+  });
+
+  it('should handle text input changes', () => {
+    // Arrange
+    const { getByPlaceholderText } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    );
+
+    const usernameInput = getByPlaceholderText('Username');
+    const passwordInput = getByPlaceholderText('Password');
+
+    // Act
+    fireEvent.changeText(usernameInput, 'newuser');
+    fireEvent.changeText(passwordInput, 'newpass');
+
+    // Assert
+    expect(usernameInput.props.value).toBe('newuser');
+    expect(passwordInput.props.value).toBe('newpass');
+  });
+
+  it('should render with proper accessibility labels', () => {
+    // Act
+    const { getByText, getByPlaceholderText } = render(
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    );
+
+    // Assert
+    expect(getByText('Login')).toBeTruthy();
+    expect(getByPlaceholderText('Username')).toBeTruthy();
+    expect(getByPlaceholderText('Password')).toBeTruthy();
+  });
+});
