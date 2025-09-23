@@ -10,6 +10,8 @@ export {
 
 export { StorageKeys } from './StorageKey';
 
+export { FlashMessageType } from './FlashMessage';
+
 // export {ImagePath} from './ImageKeys';
 
 // export type {ImagePathType} from './ImageKeys';
