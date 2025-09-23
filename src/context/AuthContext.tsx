@@ -1,10 +1,8 @@
-
-
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showMessage } from 'react-native-flash-message';
 import { FlashMessage } from '@components';
-import { FlashMessageType, UIStrings, APIStrings, FlashMessageTypes, StorageKeys } from '@constant';
+import { UIStrings, FlashMessageTypes, StorageKeys } from '@constant';
+import { AuthHooks } from '../services';
 
 interface User {
   id: number;
@@ -13,7 +11,6 @@ interface User {
   firstName?: string;
   lastName?: string;
   image?: string;
-  // add other fields returned by dummyjson if needed
 }
 
 interface AuthContextType {
@@ -26,6 +23,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -33,86 +38,59 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [userToken, setUserToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Use React Query hooks
+  const { mutateAsync: loginMutation, isPending: isLoggingIn } = AuthHooks.useLogin();
+  const { mutateAsync: logoutMutation, isPending: isLoggingOut } = AuthHooks.useLogout();
+  const { data: storedUser } = AuthHooks.useStoredUser();
+
+  // Update local state when stored user changes
   useEffect(() => {
-    const checkAuthState = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        const storedUser = await AsyncStorage.getItem('user');
+    if (storedUser) {
+      setUser(storedUser);
+      // Get token from storage
+      AsyncStorage.getItem(StorageKeys.USER_TOKEN).then(token => {
+        setUserToken(token);
+      });
+    } else {
+      setUser(null);
+      setUserToken(null);
+    }
+  }, [storedUser]);
 
-        if (token) {
-          setUserToken(token);
-        }
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        }
-      } catch (error) {
-        console.error('Error checking auth state:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuthState();
-  }, []);
+  // Update loading state
+  useEffect(() => {
+    setIsLoading(isLoggingIn || isLoggingOut);
+  }, [isLoggingIn, isLoggingOut]);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      setIsLoading(true);
-      const response = await fetch(APIStrings.LOGIN_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': APIStrings.CONTENT_TYPE,
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.accessToken) {
-        // Save token
-        await AsyncStorage.setItem(StorageKeys.USER_TOKEN, data.accessToken);
-        setUserToken(data.accessToken);
-
-        // Fetch user profile using the token
-        const userRes = await fetch(APIStrings.USER_PROFILE_ENDPOINT, {
-          method: 'GET',
-          headers: {
-            Authorization: `${APIStrings.BEARER_PREFIX}${data.accessToken}`,
-          },
-        });
-
-        const userData: User = await userRes.json();
-
-        if (userRes.ok) {
-          await AsyncStorage.setItem(StorageKeys.USER_DATA, JSON.stringify(userData));
-          setUser(userData);
-          FlashMessage(UIStrings.LOGIN_SUCCESS, FlashMessageTypes.SUCCESS);
-        }
-
-        return true;
-      } else {
-        FlashMessage(data.message || data.error || UIStrings.LOGIN_FAILED, FlashMessageTypes.ERROR);
-        return false;
-      }
-    } catch (error) {
-      FlashMessage(UIStrings.NETWORK_ERROR, FlashMessageTypes.ERROR);
+      const response = await loginMutation({ username, password });
+      
+      // Update local state
+      setUser(response);
+      setUserToken(response.token);
+      
+      FlashMessage(UIStrings.LOGIN_SUCCESS, FlashMessageTypes.SUCCESS);
+      return true;
+    } catch (error: any) {
+      FlashMessage(error.message || UIStrings.LOGIN_FAILED, FlashMessageTypes.ERROR);
       return false;
-    } finally {
-      setIsLoading(false);
     }
   };
 
-
   const logout = async (): Promise<void> => {
     try {
-      await AsyncStorage.multiRemove([StorageKeys.USER_TOKEN, StorageKeys.USER_DATA]);
-      setUserToken(null);
+      await logoutMutation();
+      
+      // Update local state
       setUser(null);
+      setUserToken(null);
+      
       FlashMessage(UIStrings.LOGOUT_SUCCESS, FlashMessageTypes.SUCCESS);
-    } catch (error) {
-      FlashMessage(UIStrings.LOGOUT_ERROR, FlashMessageTypes.ERROR);
+    } catch (error: any) {
+      FlashMessage(error.message || UIStrings.LOGOUT_ERROR, FlashMessageTypes.ERROR);
     }
   };
 
@@ -125,12 +103,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };
