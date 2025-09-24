@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-A React Native Expo application with authentication, meeting functionality(Pending), and comprehensive testing setup.
-
-=======
 # Zoom Meeting App
 
 A React Native Expo application with authentication, meeting functionality, and comprehensive testing setup.
->>>>>>> 8dfb8b83 (Add Jest ,Write Few Test Cases)
 
 ## 🚀 Features
 
