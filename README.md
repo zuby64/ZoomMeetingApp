@@ -1,6 +1,7 @@
-# Zoom Meeting App
 
-A React Native Expo application with authentication, meeting functionality, and comprehensive testing setup.
+A React Native Expo application with authentication, meeting functionality(Pending), and comprehensive testing setup.
+=======
+# Zoom Meeting App
 
 ## 🚀 Features
 
@@ -15,7 +16,7 @@ A React Native Expo application with authentication, meeting functionality, and 
 ## 📱 Screens
 
 - **Login Screen** - User authentication with validation
-- **Home Screen** - Welcome screen with navigation options
+q- **Home Screen** - Welcome screen with navigation options
 - **Profile Screen** - User profile management
 - **Not Found Screen** - 404 error handling
 
