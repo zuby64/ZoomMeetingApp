@@ -7,6 +7,7 @@ export enum ScreenNames {
   Login = 'Login',
   Register = 'Register',
   NotFound = 'NotFound',
+  Meeting = 'Meeting',
 
   // Add other screen names here
 }
@@ -17,6 +18,7 @@ export type RootStackParamList = {
   Settings: undefined;
   Login: undefined;
   NotFound: undefined;
+  Meeting: undefined;
 };
 
 // If you have Auth stack
@@ -37,4 +39,5 @@ export const validScreens: (keyof RootStackParamList)[] = [
   ScreenNames.Settings,
   ScreenNames.Login,
   ScreenNames.NotFound,
+  ScreenNames.Meeting,
 ];

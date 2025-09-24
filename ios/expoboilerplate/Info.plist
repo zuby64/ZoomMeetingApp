@@ -77,5 +77,11 @@
     <string>Light</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires camera access for Zoom meetings</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app requires microphone access for Zoom meetings</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app requires photo library access for Zoom meetings</string>
   </dict>
 </plist>

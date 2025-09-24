@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
-import { HomeScreen, ProfileScreen, NotFoundScreen } from '../screens/index';
+import { HomeScreen, ProfileScreen, NotFoundScreen, MeetingScreen } from '../screens/index';
 import LoginScreen from '../screens/LoginScreen';
 import { RootStackParamList, ScreenNames } from './types'; // Adjust the import path as necessary
 import { ThemeProvider } from '../hooks/useAppTheme'; // Adjust the import path as necessary
@@ -33,6 +33,7 @@ const AppNavigator = () => {
             <>
               <Stack.Screen name={ScreenNames.Home} component={HomeScreen} />
               <Stack.Screen name={ScreenNames.Profile} component={ProfileScreen} />
+              <Stack.Screen name={ScreenNames.Meeting} component={MeetingScreen} />
               <Stack.Screen
                 name={ScreenNames.NotFound}
                 component={NotFoundScreen}

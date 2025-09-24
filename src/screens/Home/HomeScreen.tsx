@@ -46,34 +46,40 @@ const HomeScreen = () => {
       
       <View style={styles.buttonContainer}>
         <Button
+          buttonText="Join Meeting"
+          onPress={() => safeNavigate(ScreenNames.Meeting)}
+          buttonStyle={[styles.button, { backgroundColor: 'blue' }]}
+        />
+
+        <Button
           buttonText={UIStrings.LOGOUT}
           onPress={handleLogout}
           buttonStyle={[styles.button, { backgroundColor: 'red' }]}
         />
 
         {/* ✅ Example of normal navigation */}
-        <Button
+        {/* <Button
           buttonText={UIStrings.GO_TO_PROFILE}
           onPress={() => safeNavigate(ScreenNames.Profile, { userId: '123' })}
           buttonStyle={styles.button}
-        />
+        /> */}
 
         {/* ✅ Example of a typo / fallback test */}
-        <Button
+        {/* <Button
           buttonText={UIStrings.GO_TO_TYPO_SCREEN}
           onPress={() =>
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             safeNavigate('TypoScreenName' as any)
           }
           buttonStyle={styles.button}
-        />
+        /> */}
 
         {/* ✅ Toggle Theme */}
-        <Button 
+        {/* <Button 
           buttonText={UIStrings.TOGGLE_THEME} 
           onPress={toggleTheme}
           buttonStyle={styles.button}
-        />
+        /> */}
       </View>
     </View>
   );

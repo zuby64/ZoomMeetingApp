@@ -62,5 +62,11 @@ target 'expoboilerplate' do
         end
       end
     end
+
+    # Apple Silicon (M1/M2) compatibility fixes
+    # Based on: https://github.com/facebook/react-native/issues/32704#issuecomment-1048457543
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
   end
 end

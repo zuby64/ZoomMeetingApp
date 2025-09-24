@@ -8,6 +8,10 @@ export * as AuthHooks from './auth/useAuth';
 export * as MeetingService from './meeting/meeting.methods';
 export * as MeetingHooks from './meeting/useMeeting';
 
+// Zoom Service
+export * as ZoomService from './zoom/zoom.methods';
+export * as ZoomHooks from './zoom/useZoom';
+
 // Axios Client
 export { default as axiosClient } from './axiosClient';
 
@@ -27,3 +31,9 @@ export type {
   MeetingDetails,
   MeetingParticipant 
 } from './meeting/meeting.interface';
+
+export type { 
+  ZoomMeetingConfig, 
+  ZoomMeetingResult, 
+  ZoomMeetingStatus 
+} from './zoom/zoom.interface';
