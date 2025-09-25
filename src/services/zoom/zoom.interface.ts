@@ -5,9 +5,22 @@ export interface ZoomMeetingConfig {
   userEmail?: string;
 }
 
+export interface ZoomCreateMeetingConfig {
+  topic: string;
+  duration?: number; // in minutes
+  password?: string;
+  waitingRoom?: boolean;
+  joinBeforeHost?: boolean;
+  muteUponEntry?: boolean;
+  videoOff?: boolean;
+}
+
 export interface ZoomMeetingResult {
   success: boolean;
   error?: string;
+  meetingId?: string;
+  meetingPassword?: string;
+  joinUrl?: string;
 }
 
 export interface ZoomMeetingStatus {
@@ -15,3 +28,4 @@ export interface ZoomMeetingStatus {
   isMuted: boolean;
   isVideoOn: boolean;
 }
+

@@ -17,7 +17,7 @@ export interface LoginResponse {
   lastName: string;
   gender: string;
   image: string;
-  token: string;
+  token?: string; // Make token optional since dummyjson.com might not return it
 }
 
 export interface UserProfile {

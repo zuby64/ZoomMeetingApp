@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { useAppTheme } from '../../hooks/useAppTheme';
 import { useZoom } from '../../services/zoom';
-import { Button, Text, TextInput } from '../../components';
-import { UIStrings } from '../../constant';
+import { 
+  Button, 
+  Text, 
+  MeetingJoinForm, 
+  MeetingControls 
+} from '../../components';
 
 interface MeetingScreenProps {
   navigation: any;
@@ -22,204 +26,104 @@ const MeetingScreen: React.FC<MeetingScreenProps> = ({ navigation }) => {
     clearError 
   } = useZoom();
 
+  // Form state
   const [meetingId, setMeetingId] = useState('');
   const [meetingPassword, setMeetingPassword] = useState('');
   const [userName, setUserName] = useState('');
 
   const handleJoinMeeting = async () => {
-    if (!meetingId.trim()) {
-      Alert.alert('Error', 'Please enter a meeting ID');
-      return;
-    }
-
-    if (!userName.trim()) {
-      Alert.alert('Error', 'Please enter your name');
+    if (!meetingId.trim() || !userName.trim()) {
       return;
     }
 
     const result = await joinMeeting({
       meetingId: meetingId.trim(),
-      meetingPassword: meetingPassword.trim() || undefined,
+      meetingPassword: meetingPassword.trim(),
       userName: userName.trim(),
     });
 
-    if (!result.success) {
-      Alert.alert('Error', result.error || 'Failed to join meeting');
+    if (result.success) {
+      // Meeting joined successfully - the UI will switch to MeetingControls
+      console.log('Successfully joined meeting');
     }
   };
 
   const handleLeaveMeeting = async () => {
     const result = await leaveMeeting();
     if (result.success) {
-      navigation.goBack();
-    } else {
-      Alert.alert('Error', result.error || 'Failed to leave meeting');
+      // Reset form
+      setMeetingId('');
+      setMeetingPassword('');
+      setUserName('');
     }
   };
 
   const handleToggleMute = async () => {
-    const result = await toggleMute();
-    if (!result.success) {
-      Alert.alert('Error', result.error || 'Failed to toggle mute');
-    }
+    await toggleMute();
   };
 
   const handleToggleVideo = async () => {
-    const result = await toggleVideo();
-    if (!result.success) {
-      Alert.alert('Error', result.error || 'Failed to toggle video');
-    }
+    await toggleVideo();
   };
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
-      padding: 20,
     },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
       color: theme.colors.text,
       textAlign: 'center',
-      marginBottom: 30,
-    },
-    formContainer: {
-      marginBottom: 30,
-    },
-    inputContainer: {
-      marginBottom: 15,
-    },
-    label: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: theme.colors.text,
-      marginBottom: 5,
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      borderRadius: 8,
-      padding: 12,
-      fontSize: 16,
-      color: theme.colors.text,
-      backgroundColor: theme.colors.surface,
+      marginVertical: 20,
     },
     buttonContainer: {
-      marginBottom: 20,
+      padding: 20,
     },
     button: {
       marginVertical: 8,
     },
-    meetingControls: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginTop: 20,
-    },
-    controlButton: {
-      flex: 1,
-      marginHorizontal: 5,
-    },
-    statusText: {
-      textAlign: 'center',
-      marginTop: 20,
-      fontSize: 16,
-      color: theme.colors.text,
-    },
     errorText: {
-      color: 'red',
+      color: theme.colors.error,
       textAlign: 'center',
       marginTop: 10,
     },
   });
 
+  // If in meeting, show meeting controls
   if (meetingStatus.isInMeeting) {
     return (
-      <View style={styles.container}>
-        <Text.H1 style={styles.title}>In Meeting</Text.H1>
-        
-        <View style={styles.meetingControls}>
-          <Button
-            buttonText={meetingStatus.isMuted ? 'Unmute' : 'Mute'}
-            onPress={handleToggleMute}
-            buttonStyle={[styles.controlButton, { 
-              backgroundColor: meetingStatus.isMuted ? 'red' : 'green' 
-            }]}
-            disabled={isLoading}
-          />
-          
-          <Button
-            buttonText={meetingStatus.isVideoOn ? 'Turn Off Video' : 'Turn On Video'}
-            onPress={handleToggleVideo}
-            buttonStyle={[styles.controlButton, { 
-              backgroundColor: meetingStatus.isVideoOn ? 'blue' : 'gray' 
-            }]}
-            disabled={isLoading}
-          />
-        </View>
-
-        <Button
-          buttonText="Leave Meeting"
-          onPress={handleLeaveMeeting}
-          buttonStyle={[styles.button, { backgroundColor: 'red' }]}
-          disabled={isLoading}
-        />
-
-        {error && (
-          <Text style={styles.errorText}>{error}</Text>
-        )}
-      </View>
+      <MeetingControls
+        meetingStatus={meetingStatus}
+        onLeaveMeeting={handleLeaveMeeting}
+        onToggleMute={handleToggleMute}
+        onToggleVideo={handleToggleVideo}
+        isLoading={isLoading}
+        error={error}
+      />
     );
   }
 
+  // Show join meeting form
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text.H1 style={styles.title}>Join Zoom Meeting</Text.H1>
       
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Meeting ID *</Text>
-          <TextInput
-            value={meetingId}
-            onChangeText={setMeetingId}
-            placeholder="Enter meeting ID"
-            style={styles.input}
-            keyboardType="numeric"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Meeting Password (Optional)</Text>
-          <TextInput
-            value={meetingPassword}
-            onChangeText={setMeetingPassword}
-            placeholder="Enter meeting password"
-            style={styles.input}
-            secureTextEntry
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Your Name *</Text>
-          <TextInput
-            value={userName}
-            onChangeText={setUserName}
-            placeholder="Enter your name"
-            style={styles.input}
-          />
-        </View>
-      </View>
+      <MeetingJoinForm
+        meetingId={meetingId}
+        setMeetingId={setMeetingId}
+        meetingPassword={meetingPassword}
+        setMeetingPassword={setMeetingPassword}
+        userName={userName}
+        setUserName={setUserName}
+        onJoinMeeting={handleJoinMeeting}
+        isLoading={isLoading}
+      />
 
       <View style={styles.buttonContainer}>
         <Button
-          buttonText="Join Meeting"
-          onPress={handleJoinMeeting}
-          buttonStyle={[styles.button, { backgroundColor: 'blue' }]}
-          disabled={isLoading}
-        />
-
-        <Button
-          buttonText="Back"
+          buttonText="Back to Home"
           onPress={() => navigation.goBack()}
           buttonStyle={[styles.button, { backgroundColor: 'gray' }]}
           disabled={isLoading}
@@ -229,7 +133,7 @@ const MeetingScreen: React.FC<MeetingScreenProps> = ({ navigation }) => {
       {error && (
         <Text style={styles.errorText}>{error}</Text>
       )}
-    </View>
+    </ScrollView>
   );
 };
 

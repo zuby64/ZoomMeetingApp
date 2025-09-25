@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ScreenNames } from '../../navigation/types';
-import { useSafeNavigation } from '../../hooks/useSafeNavigation'; // ✅ your new hook
+import { useSafeNavigation } from '../../hooks/useSafeNavigation';
 import { useAppTheme } from '../../hooks/useAppTheme';
 import { useAuth } from '../../context/AuthContext';
 import { Button, Text } from '../../components';
 import { UIStrings } from '../../constant';
 
 const HomeScreen = () => {
-  const { safeNavigate } = useSafeNavigation(); // ✅ use this instead of useTypedNavigation
+  const { safeNavigate } = useSafeNavigation();
   const { theme, toggleTheme } = useAppTheme();
   const { logout } = useAuth();
 
@@ -45,6 +45,28 @@ const HomeScreen = () => {
       <Text.H1 style={styles.welcomeText}>{UIStrings.WELCOME_MESSAGE}</Text.H1>
       
       <View style={styles.buttonContainer}>
+        {/* Commented out example navigation and theme toggle buttons */}
+        {/* <Button
+          buttonText={UIStrings.GO_TO_PROFILE}
+          onPress={() => safeNavigate(ScreenNames.Profile, { userId: '123' })}
+          buttonStyle={styles.button}
+        /> */}
+
+        {/* <Button
+          buttonText={UIStrings.GO_TO_TYPO_SCREEN}
+          onPress={() =>
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            safeNavigate('TypoScreenName' as any)
+          }
+          buttonStyle={styles.button}
+        /> */}
+
+        {/* <Button 
+          buttonText={UIStrings.TOGGLE_THEME} 
+          onPress={toggleTheme}
+          buttonStyle={styles.button}
+        /> */}
+
         <Button
           buttonText="Join Meeting"
           onPress={() => safeNavigate(ScreenNames.Meeting)}
@@ -56,30 +78,6 @@ const HomeScreen = () => {
           onPress={handleLogout}
           buttonStyle={[styles.button, { backgroundColor: 'red' }]}
         />
-
-        {/* ✅ Example of normal navigation */}
-        {/* <Button
-          buttonText={UIStrings.GO_TO_PROFILE}
-          onPress={() => safeNavigate(ScreenNames.Profile, { userId: '123' })}
-          buttonStyle={styles.button}
-        /> */}
-
-        {/* ✅ Example of a typo / fallback test */}
-        {/* <Button
-          buttonText={UIStrings.GO_TO_TYPO_SCREEN}
-          onPress={() =>
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            safeNavigate('TypoScreenName' as any)
-          }
-          buttonStyle={styles.button}
-        /> */}
-
-        {/* ✅ Toggle Theme */}
-        {/* <Button 
-          buttonText={UIStrings.TOGGLE_THEME} 
-          onPress={toggleTheme}
-          buttonStyle={styles.button}
-        /> */}
       </View>
     </View>
   );

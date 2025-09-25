@@ -51,7 +51,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(storedUser);
       // Get token from storage
       AsyncStorage.getItem(StorageKeys.USER_TOKEN).then(token => {
-        setUserToken(token);
+        if (token) {
+          setUserToken(token);
+        }
       });
     } else {
       setUser(null);
@@ -68,9 +70,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await loginMutation({ username, password });
       
-      // Update local state
-      setUser(response);
-      setUserToken(response.token);
+      // Update local state only if response is valid
+      if (response) {
+        setUser(response);
+        if (response.token) {
+          setUserToken(response.token);
+        }
+      }
       
       FlashMessage(UIStrings.LOGIN_SUCCESS, FlashMessageTypes.SUCCESS);
       return true;

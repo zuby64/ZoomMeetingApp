@@ -21,9 +21,23 @@ export const useLogin = () => {
     mutationFn: async (credentials: LoginRequest) => {
       const response = await AuthService.login(credentials);
       
-      // Store token and user data
-      await AsyncStorage.setItem(StorageKeys.USER_TOKEN, response.token);
-      await AsyncStorage.setItem(StorageKeys.USER_DATA, JSON.stringify(response));
+      // Debug: Log the response to see what we're getting
+      console.log('Login response:', response);
+      console.log('Response token:', response.token);
+      
+      // Store token and user data only if they exist
+      if (response.token) {
+        await AsyncStorage.setItem(StorageKeys.USER_TOKEN, response.token);
+      } else {
+        // If no token is provided by the API, generate a mock token for demo purposes
+        const mockToken = `mock_token_${Date.now()}_${response.id}`;
+        await AsyncStorage.setItem(StorageKeys.USER_TOKEN, mockToken);
+        // Add the mock token to the response
+        response.token = mockToken;
+      }
+      if (response) {
+        await AsyncStorage.setItem(StorageKeys.USER_DATA, JSON.stringify(response));
+      }
       
       return response;
     },

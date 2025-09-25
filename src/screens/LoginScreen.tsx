@@ -23,7 +23,7 @@ const LoginScreen = () => {
       return;
     }
 
-    await login(username.trim(), password);
+    await login(username.trim(), password.trim());
   };
 
   const styles = StyleSheet.create({

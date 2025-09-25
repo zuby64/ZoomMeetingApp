@@ -13,7 +13,11 @@ import linking from './linking';
 
 const Stack = createNativeStackNavigator<RootStackParamList>(); // <--- here
 
-const AppNavigator = () => {
+interface AppNavigatorProps {
+  sdkInitialized?: boolean;
+}
+
+const AppNavigator: React.FC<AppNavigatorProps> = ({ sdkInitialized = false }) => {
   const { isInitialized } = useBootApplication();
   const { userToken, isLoading } = useAuth();
 

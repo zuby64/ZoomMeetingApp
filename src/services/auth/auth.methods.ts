@@ -11,8 +11,10 @@ export class AuthService {
   static async login(credentials: LoginRequest): Promise<LoginResponse> {
     try {
       const response = await axiosClient.post('/auth/login', credentials);
+      console.log('Raw API response:', response.data);
       return response.data;
     } catch (error: any) {
+      console.error('Login API error:', error.response?.data || error.message);
       throw new Error(error.response?.data?.message || 'Login failed');
     }
   }

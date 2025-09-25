@@ -1,83 +1,78 @@
-# Zoom Meeting SDK Setup
+# Zoom Meeting SDK Setup Instructions
 
-This document outlines the setup and implementation of the Zoom Meeting SDK in the React Native app.
+## ⚠️ Important: Not Compatible with Expo Go
 
-## Setup Completed
+The Zoom Meeting SDK for React Native **does NOT work in Expo Go** because it requires native code compilation.
 
-### iOS Configuration
-- ✅ **Podfile**: Already configured with `use_frameworks!` and iOS 15.1+ deployment target
-- ✅ **Info.plist**: Added required permissions:
-  - `NSCameraUsageDescription`: Camera access for Zoom meetings
-  - `NSMicrophoneUsageDescription`: Microphone access for Zoom meetings
-  - `NSPhotoLibraryUsageDescription`: Photo library access for Zoom meetings
+## 🚀 Build Instructions
 
-### Android Configuration
-- ✅ **build.gradle**: Updated `minSdkVersion` to 21 (from 24)
-- ✅ **AndroidManifest.xml**: Added required permissions:
-  - `android.permission.INTERNET`
-  - `android.permission.CAMERA`
-  - `android.permission.RECORD_AUDIO`
-  - `android.permission.READ_EXTERNAL_STORAGE`
+### 1. Prebuild the Project
+```bash
+npx expo prebuild
+```
 
-## Implementation
+### 2. Install iOS Dependencies
+```bash
+cd ios && pod install && cd ..
+```
 
-### Zoom Service
-- **Location**: `src/services/zoom/`
-- **Files**:
-  - `zoom.interface.ts`: TypeScript interfaces for Zoom functionality
-  - `zoom.methods.ts`: Core Zoom service implementation
-  - `useZoom.ts`: React hook for Zoom functionality
-  - `index.ts`: Exports
+### 3. Run on iOS
+```bash
+npx expo run:ios
+```
 
-### Meeting Screen
-- **Location**: `src/screens/Meeting/MeetingScreen.tsx`
-- **Features**:
-  - Join meeting form (Meeting ID, Password, User Name)
-  - Meeting controls (Mute/Unmute, Video On/Off, Leave Meeting)
-  - Error handling and loading states
+### 4. Run on Android
+```bash
+npx expo run:android
+```
 
-### Navigation
-- Added `Meeting` screen to navigation types and AppNavigator
-- Updated home screen with "Join Meeting" button
+## 🔧 Development Setup
 
-## Usage
+### For iOS Development:
+1. Make sure you have Xcode installed
+2. Run `npx expo run:ios` to build and run on iOS Simulator
+3. Or open `ios/ZoomMeetingApp.xcworkspace` in Xcode
 
-### Join a Meeting
-1. Tap "Join Meeting" button on home screen
-2. Enter meeting details:
-   - Meeting ID (required)
-   - Meeting Password (optional)
-   - Your Name (required)
-3. Tap "Join Meeting"
+### For Android Development:
+1. Make sure you have Android Studio and Android SDK installed
+2. Run `npx expo run:android` to build and run on Android Emulator
+3. Or open the project in Android Studio
 
-### Meeting Controls
-- **Mute/Unmute**: Toggle microphone
-- **Video On/Off**: Toggle camera
-- **Leave Meeting**: Exit the meeting and return to home screen
+## 🎯 Testing the Zoom Integration
 
-## Zoom SDK Configuration
+1. **Build the app** using the commands above (NOT Expo Go)
+2. **Enter a real Zoom meeting ID** and password
+3. **Enter your name**
+4. **Click "Join Meeting"**
+5. You should see the real Zoom video interface
 
-The app is configured with the following credentials:
-- **Client ID**: `PTEXFnRWRMinKQm6M1lLvg`
-- **Client Secret**: `gfAJLs6vWV49k1JWNIrnsF52GuiHXbFD`
+## 🔑 JWT Token Security Note
 
-## Next Steps
+Currently, JWT tokens are generated locally in the app for testing purposes. In production, you should:
 
-To complete the integration with the actual Zoom SDK:
+1. Move JWT generation to your backend server
+2. Create an API endpoint to generate meeting JWT tokens
+3. Fetch the JWT token from your backend when joining meetings
 
-1. **Initialize Zoom SDK**: Replace the mock implementation in `zoom.methods.ts` with actual Zoom SDK calls
-2. **Add Video/Audio Components**: Implement actual video and audio rendering components
-3. **Handle SDK Events**: Add proper event listeners for meeting state changes
-4. **Error Handling**: Enhance error handling for SDK-specific errors
-5. **Testing**: Test on both iOS and Android devices
+## 📱 Expected Behavior
 
-## Dependencies
+- ✅ SDK initializes with JWT token
+- ✅ Meeting join form accepts meeting ID, password, and username
+- ✅ Real Zoom video interface appears after joining
+- ✅ Custom controls for mute, video, and leave meeting
+- ✅ Proper error handling and user feedback
 
-- `@zoom/meetingsdk-react-native`: ^6.4.10 (already installed)
+## 🐛 Troubleshooting
 
-## Notes
+### "SDK not available" error:
+- Make sure you're not testing in Expo Go
+- Use `npx expo run:ios` or `npx expo run:android`
 
-- The current implementation includes mock functionality for demonstration purposes
-- All UI components are styled using the app's theme system
-- Error handling and loading states are implemented throughout
-- The service is designed to be easily replaceable with actual Zoom SDK calls
+### "joinMeeting method not available" error:
+- This usually means you're in Expo Go
+- Build the app using the instructions above
+
+### Meeting join fails:
+- Check that the meeting ID and password are correct
+- Verify the meeting is active and allows participants
+- Check console logs for detailed error information
