@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useAppTheme } from '../../hooks/useAppTheme';
 import { useZoom } from '../../services/zoom';
+import { generateMeetingJWT } from '../../services/zoom/jwtGenerator';
 import { 
   Button, 
   Text, 
@@ -36,15 +37,27 @@ const MeetingScreen: React.FC<MeetingScreenProps> = ({ navigation }) => {
       return;
     }
 
-    const result = await joinMeeting({
-      meetingId: meetingId.trim(),
-      meetingPassword: meetingPassword.trim(),
-      userName: userName.trim(),
-    });
+    try {
+      // Generate meeting JWT for this specific meeting
+      console.log('🔑 Generating meeting JWT for meeting:', meetingId.trim());
+      const meetingToken = generateMeetingJWT(meetingId.trim(), 0); // 0=attendee, 1=host
+      console.log('✅ Meeting JWT generated:', meetingToken.substring(0, 50) + '...');
 
-    if (result.success) {
-      // Meeting joined successfully - the UI will switch to MeetingControls
-      console.log('Successfully joined meeting');
+      const result = await joinMeeting({
+        meetingId: meetingId.trim(),
+        meetingPassword: meetingPassword.trim(),
+        userName: userName.trim(),
+        zoomAccessToken: meetingToken, // ✅ REQUIRED - Meeting-specific JWT
+      });
+
+      if (result.success) {
+        // Meeting joined successfully - the UI will switch to MeetingControls
+        console.log('✅ Successfully joined meeting');
+      } else {
+        console.error('❌ Failed to join meeting:', result.error);
+      }
+    } catch (error) {
+      console.error('❌ Error generating meeting JWT:', error);
     }
   };
 

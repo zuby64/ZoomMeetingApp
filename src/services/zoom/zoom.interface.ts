@@ -3,6 +3,7 @@ export interface ZoomMeetingConfig {
   meetingPassword?: string;
   userName: string;
   userEmail?: string;
+  zoomAccessToken?: string; // Meeting-specific JWT token
 }
 
 export interface ZoomCreateMeetingConfig {
