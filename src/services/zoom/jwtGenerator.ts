@@ -10,10 +10,7 @@ const ZOOM_MEETING_SDK_SECRET = 'gfAJLs6vWV49k1JWNIrnsF52GuiHXbFD';
  */
 export const generateJwt = (meetingNumber?: string, role: number = 0): string => {
   try {
-    console.log('Generating JWT token for Zoom Meeting SDK...');
-    console.log('SDK Key:', ZOOM_MEETING_SDK_KEY);
-    console.log('Meeting Number:', meetingNumber || 'Not provided');
-    console.log('Role:', role);
+
 
     // Current time in seconds
     const iat = Math.floor(Date.now() / 1000) - 30;

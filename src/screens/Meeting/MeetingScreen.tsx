@@ -24,7 +24,6 @@ const MeetingScreen: React.FC<MeetingScreenProps> = ({ navigation }) => {
     leaveMeeting, 
     toggleMute, 
     toggleVideo, 
-    clearError 
   } = useZoom();
 
   // Form state
@@ -39,9 +38,7 @@ const MeetingScreen: React.FC<MeetingScreenProps> = ({ navigation }) => {
 
     try {
       // Generate meeting JWT for this specific meeting
-      console.log('🔑 Generating meeting JWT for meeting:', meetingId.trim());
       const meetingToken = generateMeetingJWT(meetingId.trim(), 0); // 0=attendee, 1=host
-      console.log('✅ Meeting JWT generated:', meetingToken.substring(0, 50) + '...');
 
       const result = await joinMeeting({
         meetingId: meetingId.trim(),

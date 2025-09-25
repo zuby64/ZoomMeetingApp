@@ -45,28 +45,6 @@ const HomeScreen = () => {
       <Text.H1 style={styles.welcomeText}>{UIStrings.WELCOME_MESSAGE}</Text.H1>
       
       <View style={styles.buttonContainer}>
-        {/* Commented out example navigation and theme toggle buttons */}
-        {/* <Button
-          buttonText={UIStrings.GO_TO_PROFILE}
-          onPress={() => safeNavigate(ScreenNames.Profile, { userId: '123' })}
-          buttonStyle={styles.button}
-        /> */}
-
-        {/* <Button
-          buttonText={UIStrings.GO_TO_TYPO_SCREEN}
-          onPress={() =>
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            safeNavigate('TypoScreenName' as any)
-          }
-          buttonStyle={styles.button}
-        /> */}
-
-        {/* <Button 
-          buttonText={UIStrings.TOGGLE_THEME} 
-          onPress={toggleTheme}
-          buttonStyle={styles.button}
-        /> */}
-
         <Button
           buttonText="Join Meeting"
           onPress={() => safeNavigate(ScreenNames.Meeting)}

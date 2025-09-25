@@ -114,7 +114,6 @@ export const useZoom = () => {
 
     // Listen for meeting status changes
     const handleMeetingStatusChanged = (status: any) => {
-      console.log('📡 Meeting status changed:', status);
       
       // Update local state based on Zoom SDK events
       if (status && typeof status === 'object') {
@@ -129,7 +128,6 @@ export const useZoom = () => {
 
     // Listen for audio status changes
     const handleAudioStatusChanged = (status: any) => {
-      console.log('🔊 Audio status changed:', status);
       if (status && typeof status === 'object' && status.isMuted !== undefined) {
         setMeetingStatus(prev => ({ ...prev, isMuted: status.isMuted }));
       }
@@ -176,9 +174,7 @@ export const useZoom = () => {
     setError(null);
 
     try {
-      console.log('🚀 Starting meeting join process...');
-      console.log('⚠️  IMPORTANT: Make sure you are NOT testing in Expo Go!');
-      console.log('⚠️  You must use: expo prebuild && expo run:ios (or expo run:android)');
+
       
       // Check if Zoom SDK is available
       if (!zoomSDK) {
@@ -196,7 +192,6 @@ export const useZoom = () => {
 
       // Check if joinMeeting method exists
       const availableMethods = Object.keys(zoomSDK);
-      console.log('🔍 Available SDK methods for joinMeeting check:', availableMethods);
       
       if (!availableMethods.includes('joinMeeting') || typeof zoomSDK.joinMeeting !== 'function') {
         const errorMessage = 'Zoom SDK joinMeeting method is not available. This usually means you are testing in Expo Go, which is not supported. Please use: expo prebuild && expo run:ios';
@@ -213,15 +208,10 @@ export const useZoom = () => {
       }
 
 
-      console.log('Attempting to join meeting with config:', {
-        userName: config.userName,
-        meetingNumber: config.meetingId,
-        hasPassword: !!config.meetingPassword,
-      });
+
 
       // Use the provided meeting JWT token (generated in MeetingScreen)
       const meetingJWT = config.zoomAccessToken;
-      console.log('Using provided meeting JWT:', meetingJWT ? meetingJWT.substring(0, 50) + '...' : 'No JWT provided');
 
       if (!meetingJWT) {
         const errorMessage = 'Meeting JWT token is required to join a meeting. Please generate a meeting token first.';
@@ -244,10 +234,8 @@ export const useZoom = () => {
         password: config.meetingPassword || '', // Optional password
       };
       
-      console.log('Join parameters:', joinParams);
       
       // Call joinMeeting exactly like the official example
-      console.log('Joining meeting with params:', joinParams);
 
       let result;
       try {
@@ -334,12 +322,10 @@ export const useZoom = () => {
     setError(null);
     
     try {
-      console.log('🚪 Leaving meeting...');
       
       // Check if Zoom SDK is available
       if (!zoomSDK) {
         const errorMessage = 'Zoom SDK is not available for leaving meeting.';
-        console.error('❌ SDK not available for leave:', errorMessage);
         setError(errorMessage);
         showMessage({
           message: 'SDK Error',
@@ -400,7 +386,6 @@ export const useZoom = () => {
       // Check if Zoom SDK is available
       if (!zoomSDK) {
         const errorMessage = 'Zoom SDK is not available for mute toggle.';
-        console.error('❌ SDK not available for mute:', errorMessage);
         setError(errorMessage);
         showMessage({
           message: 'SDK Error',
@@ -433,7 +418,6 @@ export const useZoom = () => {
       
       return { success: true };
     } catch (err) {
-      console.error('❌ Toggle mute error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to toggle mute';
       setError(errorMessage);
       showMessage({
@@ -453,7 +437,6 @@ export const useZoom = () => {
     setError(null);
     
     try {
-      console.log('📹 Toggling video...');
       
       // Check if Zoom SDK is available
       if (!zoomSDK) {

@@ -17,13 +17,10 @@ export default function App() {
   useEffect(() => {
     const initializeZoomSDK = () => {
       try {
-        console.log('Initializing Zoom SDK with JWT token...');
         
         // Generate proper JWT token using the official Zoom SDK pattern
         const token = generateSDKJWT();
-        console.log('JWT token generated for Zoom Meeting SDK:', token.substring(0, 50) + '...');
         setJwtToken(token);
-        console.log('✅ Zoom SDK Provider will initialize with JWT token');
       } catch (error) {
         console.error('Failed to generate JWT token:', error);
         setJwtToken(null);
@@ -32,7 +29,7 @@ export default function App() {
 
     initializeZoomSDK();
   }, []);
-
+//adding as a guard....
   if (!jwtToken) {
     return (
       <GestureHandlerRootView style={styles.container}>
